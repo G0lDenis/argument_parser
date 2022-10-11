@@ -1,19 +1,17 @@
 #include <vector>
-#include <cstring>
+#include <string>
 
-std::vector<int> parse(int argc, char** argv, const std::vector<char* [2]>& params) {
-    std::vector<int> result = std::vector<int>(params.size());
+std::vector<std::string> parse(int argc, char** argv, const std::vector<std::pair<std::string, std::string>>& params) {
+    std::vector<std::string> result = std::vector<std::string>(params.size());
     for (int i = 1; i < argc; i++) {
-        char* arg = argv[i];
-        char* end = arg + sizeof(arg) / sizeof(argv[0]);
-        char* eq = std::find(arg, end, '=');
-        for (int j = 0; i < params.size(); i++) {
-            if (strcmp(params[j][0], std::substr(arg, eq)) ||
-                strcmp(params[j][1], std::substr(arg, eq))) {
-                result[j] = _atoi64(std::substr(eq + 1, end));
+        std::string arg = argv[i];
+        auto eq = arg.find('=');
+        for (int j = 0; j < params.size(); j++) {
+            if (params[j].first == arg.substr(0, eq) ||
+                params[j].second == arg.substr(0, eq)) {
+                result[j] = arg.substr(eq + 1, arg.length() - eq - 1);
             }
         }
-        i++;
     }
 
     return result;
