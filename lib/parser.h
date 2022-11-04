@@ -2,5 +2,10 @@
 
 #include <vector>
 #include <string>
+#include <any>
 
-std::vector<std::string> parse(int argc, char** argv, const std::vector<std::tuple<std::string, std::string, std::string>>& params);
+void PutValue(const std::any& variable, const std::any& value);
+
+void Parse(int argc, char** argv,
+		   const std::vector<std::tuple<void*, std::string&, std::string&>>& params,
+		   std::vector<std::string>& args);
