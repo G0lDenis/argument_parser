@@ -8,6 +8,8 @@ void PutValue(const std::any& variable, const std::any& value) {
 		*std::any_cast<std::string*>(variable) = std::any_cast<std::string>(value);
 	} else if (typeid(variable) == typeid(int*)) {
 		*std::any_cast<int*>(variable) = std::any_cast<int>(value);
+	} else if (typeid(variable) == typeid(bool*)) {
+		*std::any_cast<bool*>(variable) = std::any_cast<bool>(value);
 	}
 }
 
