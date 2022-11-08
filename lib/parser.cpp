@@ -1,22 +1,26 @@
+#include "parser.h"
+
 #include <vector>
 #include <string>
 #include <tuple>
-#include <any>
+#include <variant>
 
-void PutValue(const std::any& variable, const std::any& value) {
-	if (typeid(variable) == typeid(std::string*)) {
-		*std::any_cast<std::string*>(variable) = std::any_cast<std::string>(value);
-	} else if (typeid(variable) == typeid(int*)) {
-		*std::any_cast<int*>(variable) = std::any_cast<int>(value);
-	} else if (typeid(variable) == typeid(bool*)) {
-		*std::any_cast<bool*>(variable) = std::any_cast<bool>(value);
+void PutValue(supported_variants& variable, const std::string& value) {
+	switch (variable.index()) {
+		case 0:
+			variable = stoi(value);
+			break;
+		case 1:
+			variable = (value != "0");
+			break;
+		case 2:
+			variable = value;
 	}
 }
 
 void Parse(int argc, char** argv,
-		   const std::vector<std::tuple<void*, std::string&, std::string&>>& params,
+		   std::vector<std::tuple<supported_variants&, std::string, std::string>>& params,
 		   std::vector<std::string>& args) {
-	std::vector<std::string> result = std::vector<std::string>(params.size());
 	int i = 1;
 	while (i < argc) {
 		std::string arg = argv[i];
@@ -35,21 +39,22 @@ void Parse(int argc, char** argv,
 			bool param_found = false;
 			for (auto j: params) {
 				if (std::get<1>(j) == arg || std::get<2>(j) == arg) {
-					PutValue(std::get<0>(j), 1);
+					PutValue(std::get<0>(j), "1");
 					param_found = true;
 					break;
 				}
 			}
-			if (!param_found && i + 1 < argc) {
-				for (auto j: params) {
-					if (std::get<1>(j) == arg || std::get<2>(j) == arg) {
-						PutValue(std::get<0>(j), argv[++i]);
-						break;
+			if (!param_found) {
+				if (i + 1 < argc) {
+					for (auto j: params) {
+						if (std::get<1>(j) == arg || std::get<2>(j) == arg) {
+							PutValue(std::get<0>(j), argv[++i]);
+							break;
+						}
 					}
+				} else {
+					args.emplace_back(argv[i]);
 				}
-			}
-			else {
-				args.emplace_back(argv[i]);
 			}
 		}
 		i++;

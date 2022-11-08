@@ -2,10 +2,12 @@
 
 #include <vector>
 #include <string>
-#include <any>
+#include <variant>
 
-void PutValue(const std::any& variable, const std::any& value);
+#define supported_variants std::variant<int, bool, std::string>
+
+void PutValue(supported_variants& variable, const std::string& value);
 
 void Parse(int argc, char** argv,
-		   const std::vector<std::tuple<void*, std::string&, std::string&>>& params,
+		   std::vector<std::tuple<supported_variants&, std::string, std::string>>& params,
 		   std::vector<std::string>& args);
