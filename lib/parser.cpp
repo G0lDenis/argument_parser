@@ -39,22 +39,22 @@ void Parse(int argc, char** argv,
 			bool param_found = false;
 			for (auto j: params) {
 				if (std::get<1>(j) == arg || std::get<2>(j) == arg) {
-					PutValue(std::get<0>(j), "1");
+					switch (std::get<0>(j).index()) {
+						case 0:
+							PutValue(std::get<0>(j), argv[++i]);
+							break;
+						case 1:
+							PutValue(std::get<0>(j), "1");
+							break;
+						case 2:
+							PutValue(std::get<0>(j), argv[++i]);
+					}
 					param_found = true;
 					break;
 				}
 			}
 			if (!param_found) {
-				if (i + 1 < argc) {
-					for (auto j: params) {
-						if (std::get<1>(j) == arg || std::get<2>(j) == arg) {
-							PutValue(std::get<0>(j), argv[++i]);
-							break;
-						}
-					}
-				} else {
-					args.emplace_back(argv[i]);
-				}
+				args.emplace_back(argv[i]);
 			}
 		}
 		i++;
